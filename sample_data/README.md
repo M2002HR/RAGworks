@@ -1,4 +1,7 @@
-# Sample data (synthetic only)
+# Sample Data
 
-Use ONLY synthetic/sample data in this folder.
-Example filename to add later: `example.txt` (not included).
+Synthetic text corpora for demos and tests.
+
+- `capitals.txt` — one document per line with short, factual sentences about world capitals.
+
+> Use only synthetic/sample data here. Do **not** add real or sensitive data.

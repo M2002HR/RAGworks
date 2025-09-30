@@ -1,0 +1,10 @@
+Paris is the capital of France and home to the Eiffel Tower.
+London is the capital of the United Kingdom.
+Berlin has a vibrant technology scene and historic landmarks.
+Oslo is the capital of Norway.
+Stockholm is the capital of Sweden.
+Rome is the capital of Italy.
+Madrid is the capital of Spain.
+Tokyo is the capital of Japan.
+Canberra is the capital of Australia.
+Ottawa is the capital of Canada.
