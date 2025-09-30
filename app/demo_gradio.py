@@ -1,7 +1,7 @@
-"""Standalone Gradio demo for the stub RAG answer().
+"""Standalone Gradio demo for the stub RAG retrieval pipeline.
 
 - Loads sample_data/capitals.txt by default (one document per line).
-- Uses llm_rag.rag_stub.answer(query, docs) with simple keyword match.
+- Uses llm_rag.pipeline.rag_pipeline(...) for keyword-based retrieval + answer.
 - No external APIs or secrets required.
 
 Run:
@@ -22,7 +22,7 @@ if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
 
 import gradio as gr  # noqa: E402
-from llm_rag.rag_stub import answer  # noqa: E402
+from llm_rag.pipeline import rag_pipeline, build_index  # noqa: E402
 
 
 SAMPLE_PATH = repo_root / "sample_data" / "capitals.txt"
@@ -37,11 +37,10 @@ def _load_docs(path: pathlib.Path = SAMPLE_PATH) -> List[str]:
 
 
 def _run(query: str, docs_text: str, k: int) -> str:
-    """Use provided docs_text (one per line) or fall back to sample_data."""
+    """Use provided docs_text (one per line) or fall back to sample_data, then retrieve top-k."""
     docs = [ln.strip() for ln in docs_text.splitlines() if ln.strip()] or _load_docs()
-    # Keep only top-k docs for the stub to mimic retrieval behaviour
-    docs = docs[: max(1, int(k))]
-    return answer(query, docs)
+    idx = build_index(docs)
+    return rag_pipeline(query, index=idx, k=max(1, int(k)))
 
 
 def create_app() -> gr.Blocks:
