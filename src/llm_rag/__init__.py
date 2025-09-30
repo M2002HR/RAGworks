@@ -1,5 +1,6 @@
-"""Lightweight keyword-matching RAG stub, reusable across projects."""
+"""Lightweight keyword-matching RAG components, reusable across projects."""
 from .rag_stub import answer
+from .index_stub import SimpleIndex
 
-__all__ = ["answer"]
-__version__ = "0.1.0"
+__all__ = ["answer", "SimpleIndex"]
+__version__ = "0.2.0"
