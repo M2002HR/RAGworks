@@ -1,15 +1,49 @@
-# AI & Automation Portfolio — Foundation
+# portfolio-foundation
 
-A minimal, local-first repository skeleton for an AI & Automation portfolio. It includes placeholders for docs and sample data (synthetic only).
+[![CI](https://img.shields.io/github/actions/workflow/status/yourname/portfolio-foundation/ci.yml?branch=main)](https://github.com/yourname/portfolio-foundation/actions)
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-## Quick start
-1. Create and activate a virtual environment.
-2. `pip install -r requirements.txt`
-3. `pytest -q`
+A compact AI & Automation portfolio repo that ships a reusable RAG stub, CLI, Gradio demo, Docker setup, and CI pipeline.
+**No external APIs are required**; keep secrets as placeholders like `OPENAI_API_KEY=PLACEHOLDER` for demos.
 
-## Structure
-- `docs/` — Documentation placeholder.
-- `sample_data/` — Synthetic/sample files only. Do not add real or sensitive data.
-- `tests/` — Smoke tests.
+## Quickstart
+```bash
+# 1) Install
+pip install -r requirements.txt
+pip install -e .
 
-> Note: Use British English spelling where practical.
+# 2) Run tests
+pytest -q
+```
+
+## Run the CLI
+```bash
+python -m llm_rag.cli -q "Which city in France has the Eiffel Tower?"
+```
+Use `--docs sample_data/capitals.txt` to point at the bundled corpus or `--save-index/--load-index` for caching.
+
+## Launch the Gradio demo
+```bash
+PYTHONPATH=src python app/demo_gradio.py
+```
+Then open http://localhost:7860/. The demo falls back to `sample_data/capitals.txt` if the textarea is empty.
+
+## Docker
+```bash
+docker compose up --build
+```
+This serves the Gradio demo on port 7860 using the bundled requirements.
+
+## Documentation
+- [Architecture](docs/ARCHITECTURE.md) — explains the modules, pipelines, and data flow.
+- [Demo](docs/DEMO.md) — lists CLI, Gradio, and Docker usage tips.
+
+## Project structure
+- `src/llm_rag/` — Keyword-based RAG stub, SimpleIndex, pipeline utilities, CLI, and demo helpers.
+- `app/demo_gradio.py` — Standalone Blocks app wired into the pipeline.
+- `sample_data/` — Synthetic corpora (capitals) for demos/tests.
+- `tests/` — Pytest smoke tests covering pipeline, CLI, demo, Docker, and docs.
+- `docs/` — Expanded documentation referenced above.
+
+> Prefer British English spelling when practical.
