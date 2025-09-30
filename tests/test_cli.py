@@ -28,3 +28,17 @@ def test_cli_reads_docs_file(tmp_path):
     rc, out = _run(["-q", "capital of Italy", "--docs", str(docs_path), "-k", "1"])
     assert rc == 0
     assert "Rome" in out
+
+
+def test_cli_save_then_load_index(tmp_path):
+    docs_path = tmp_path / "docs.txt"
+    docs_path.write_text("Oslo is the capital of Norway.\nStockholm is the capital of Sweden.\n", encoding="utf-8")
+    idx_path = tmp_path / "idx.json"
+
+    rc, _ = _run(["-q", "capital of Norway", "--docs", str(docs_path), "--save-index", str(idx_path), "-k", "1"])
+    assert rc == 0
+    assert idx_path.exists()
+
+    rc, out = _run(["-q", "capital of Norway", "--load-index", str(idx_path), "-k", "1"])
+    assert rc == 0
+    assert "Oslo" in out
