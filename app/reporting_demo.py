@@ -12,6 +12,7 @@ src_path = repo_root / "src"
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
 
+import os
 import gradio as gr  # noqa: E402
 from llm_rag.reporting import (  # noqa: E402
     generate_daily_report, generate_social_post,
@@ -58,13 +59,13 @@ def create_reporting_app() -> gr.Blocks:
             date_str = gr.Textbox(label="Date (YYYY-MM-DD, optional)", value="")
             md = gr.Markdown(label="Report (Markdown)")
             post = gr.Textbox(label="Social Post", lines=3)
-            gr.Button("Generate").click(_generate, inputs=[metrics, highlights, date_str], outputs=[md, post])
+            gr.Button("Generate").click(_generate, inputs=[metrics, highlights, date_str], outputs=[md, post], api_name=False)
 
         with gr.Tab("Social Card"):
             title = gr.Textbox(label="Title", value="Daily Report")
             subtitle = gr.Textbox(label="Subtitle", value="automation & ai")
             svg_path = gr.Textbox(label="Saved SVG Path", interactive=False)
-            gr.Button("Render Card").click(_make_card, inputs=[title, subtitle], outputs=[svg_path])
+            gr.Button("Render Card").click(_make_card, inputs=[title, subtitle], outputs=[svg_path], api_name=False)
 
         with gr.Tab("Schedule"):
             post_text = gr.Textbox(label="Post text", value="Daily update: Launched the demo. #automation #ai", lines=3)
@@ -72,10 +73,12 @@ def create_reporting_app() -> gr.Blocks:
             assets_path = gr.Textbox(label="Asset path (optional)", value=str(repo_root / "sample_data" / "social_card.svg"))
             queue_path = gr.Textbox(label="Queue file path", value=str(repo_root / "sample_data" / "schedule.json"))
             scheduled = gr.Code(label="Scheduled Entry (JSON)", language="json")
-            gr.Button("Schedule Post").click(_schedule, inputs=[post_text, when_iso, assets_path, queue_path], outputs=[scheduled])
+            gr.Button("Schedule Post").click(_schedule, inputs=[post_text, when_iso, assets_path, queue_path], outputs=[scheduled], api_name=False)
     return demo
 
 
 if __name__ == "__main__":
     app = create_reporting_app()
-    app.launch()
+    host = os.getenv("GRADIO_SERVER_NAME", "0.0.0.0")
+    port = int(os.getenv("GRADIO_SERVER_PORT", "7860"))
+    app.launch(server_name=host, server_port=port, show_api=False)

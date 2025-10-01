@@ -13,6 +13,7 @@ src_path = repo_root / "src"
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
 
+import os
 import gradio as gr  # noqa: E402
 from llm_rag.resume import rank_resumes, load_resume_texts  # noqa: E402
 
@@ -47,10 +48,12 @@ def create_resume_app() -> gr.Blocks:
             out.headers = headers
             return table
 
-        gr.Button("Rank").click(_update, inputs=[jd, files, k], outputs=[out])
+        gr.Button("Rank").click(_update, inputs=[jd, files, k], outputs=[out], api_name=False)
     return demo
 
 
 if __name__ == "__main__":
     app = create_resume_app()
-    app.launch()
+    host = os.getenv("GRADIO_SERVER_NAME", "0.0.0.0")
+    port = int(os.getenv("GRADIO_SERVER_PORT", "7860"))
+    app.launch(server_name=host, server_port=port, show_api=False)

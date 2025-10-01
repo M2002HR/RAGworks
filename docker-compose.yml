@@ -1,12 +1,46 @@
-version: "3.8"
 services:
   demo:
     build: .
     container_name: portfolio-foundation-demo
-    ports:
-      - "7860:7860"
+    ports: ["7860:7860"]
     environment:
       - GRADIO_SERVER_NAME=0.0.0.0
       - GRADIO_SERVER_PORT=7860
       - OPENAI_API_KEY=PLACEHOLDER
-    command: ["python", "app/demo_gradio.py"]
+      - APP_PATH=app/demo_gradio.py
+  docqa:
+    build: .
+    container_name: portfolio-foundation-docqa
+    ports: ["7861:7861"]
+    environment:
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - GRADIO_SERVER_PORT=7861
+      - OPENAI_API_KEY=PLACEHOLDER
+      - APP_PATH=app/doc_qa.py
+  chatbot:
+    build: .
+    container_name: portfolio-foundation-chatbot
+    ports: ["7862:7862"]
+    environment:
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - GRADIO_SERVER_PORT=7862
+      - OPENAI_API_KEY=PLACEHOLDER
+      - APP_PATH=app/chatbot.py
+  resume:
+    build: .
+    container_name: portfolio-foundation-resume
+    ports: ["7863:7863"]
+    environment:
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - GRADIO_SERVER_PORT=7863
+      - OPENAI_API_KEY=PLACEHOLDER
+      - APP_PATH=app/resume_demo.py
+  reporting:
+    build: .
+    container_name: portfolio-foundation-reporting
+    ports: ["7864:7864"]
+    environment:
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - GRADIO_SERVER_PORT=7864
+      - OPENAI_API_KEY=PLACEHOLDER
+      - APP_PATH=app/reporting_demo.py

@@ -14,6 +14,7 @@ src_path = repo_root / "src"
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
 
+import os
 import gradio as gr  # noqa: E402
 from llm_rag.docqa import qa_files  # noqa: E402
 
@@ -31,10 +32,12 @@ def create_docqa_app() -> gr.Blocks:
             k = gr.Slider(1, 5, value=3, step=1, label="Top-K")
         files = gr.Files(label="Upload TXT/PDF files", file_types=[".txt", ".pdf"])
         out = gr.Textbox(label="Answer", lines=3)
-        gr.Button("Ask").click(_run, inputs=[q, files, k], outputs=out)
+        gr.Button("Ask").click(_run, inputs=[q, files, k], outputs=out, api_name=False)
     return demo
 
 
 if __name__ == "__main__":
     app = create_docqa_app()
-    app.launch()
+    host = os.getenv("GRADIO_SERVER_NAME", "0.0.0.0")
+    port = int(os.getenv("GRADIO_SERVER_PORT", "7860"))
+    app.launch(server_name=host, server_port=port, show_api=False)

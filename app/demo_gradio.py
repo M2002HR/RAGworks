@@ -21,6 +21,7 @@ src_path = repo_root / "src"
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
 
+import os
 import gradio as gr  # noqa: E402
 from llm_rag.pipeline import rag_pipeline, build_index  # noqa: E402
 
@@ -55,10 +56,12 @@ def create_app() -> gr.Blocks:
             lines=6,
         )
         out = gr.Textbox(label="Answer", lines=3)
-        gr.Button("Answer").click(_run, inputs=[q, docs_tb, k], outputs=out)
+        gr.Button("Answer").click(_run, inputs=[q, docs_tb, k], outputs=out, api_name=False)
     return demo
 
 
 if __name__ == "__main__":
     app = create_app()
-    app.launch()
+    host = os.getenv("GRADIO_SERVER_NAME", "0.0.0.0")
+    port = int(os.getenv("GRADIO_SERVER_PORT", "7860"))
+    app.launch(server_name=host, server_port=port, show_api=False)
