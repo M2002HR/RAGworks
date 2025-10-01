@@ -1,5 +1,7 @@
 # RAGworks
 
+Minimal RAG + automation portfolio: CLI, Gradio demos, Docker, CI — no external APIs
+
 [![CI](https://img.shields.io/github/actions/workflow/status/yourname/RAGworks/ci.yml?branch=main)](https://github.com/yourname/RAGworks/actions)
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![Licence](https://img.shields.io/badge/licence-MIT-green)
