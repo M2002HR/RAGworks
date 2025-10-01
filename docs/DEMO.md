@@ -1,32 +1,40 @@
-# Demo Guide
+# Demo Guide (precise)
 
-This guide explains how to interact with the RAG stub via CLI, Gradio, and Docker.
-
-## Prerequisites
-- Python 3.10+
-- `pip install -r requirements.txt`
-- `pip install -e .`
-
-## CLI usage
-```bash
-python -m llm_rag.cli -q "capital of France" --docs sample_data/capitals.txt -k 2
-```
-Flags:
-- `--docs PATH` — load documents from a UTF-8 file (one per line).
-- `--save-index PATH` — serialise the index to JSON after building.
-- `--load-index PATH` — skip building by loading a previous JSON index.
-
-## Gradio web demo
+## Local runs
 ```bash
 PYTHONPATH=src python app/demo_gradio.py
+PYTHONPATH=src python app/doc_qa.py
+PYTHONPATH=src python app/chatbot.py
+PYTHONPATH=src python app/resume_demo.py
+PYTHONPATH=src python app/reporting_demo.py
 ```
-Open http://localhost:7860/ and submit a query. Leaving the docs box empty uses the bundled capitals corpus. Adjust `Top-K docs` slider to change retrieval depth.
+Every demo respects `GRADIO_SERVER_NAME` and `GRADIO_SERVER_PORT` when provided.
 
-## Docker
+## Docker (multi-service)
 ```bash
-docker compose up --build
+docker compose up --build -d
+for p in 7860 7861 7862 7863 7864; do curl -sf http://localhost:$p >/dev/null && echo "port $p OK" || echo "port $p FAIL"; done
 ```
-This builds the slim Python image, installs dependencies, and exposes the demo on port 7860. The container relies on the same placeholders (`OPENAI_API_KEY=PLACEHOLDER`).
+Services: 7860 demo · 7861 document Q&A · 7862 chatbot · 7863 résumé · 7864 reporting.
 
-## Sample data
-`sample_data/capitals.txt` contains synthetic sentences about world capitals for reproducible demos/tests. Replace or extend it with your own corpus as needed.
+## CLI examples
+```bash
+llm-rag -q "What is the capital of Norway?" --docs sample_data/capitals.txt -k 1
+llm-rag -q "Capital of Japan" --docs sample_data/capitals.txt --save-index /tmp/idx.json -k 2
+llm-rag -q "Capital of Japan" --load-index /tmp/idx.json -k 1
+```
+
+## Document Q&A
+Upload TXT (one document per line) or PDF (parsed when `pypdf` is installed). If nothing is readable, the loader falls back to `sample_data/capitals.txt`.
+
+## Chatbot
+Sample prompts:
+- “Create a ticket for login bug” → ticket reference.
+- “Schedule a meeting tomorrow at 10” → scheduled stub entry.
+Other prompts flow to the RAG fallback.
+
+## Résumé shortlister
+Upload TXT/PDF résumés, provide a job description, and view ranked candidates by skill overlap.
+
+## Reporting & content
+Produce a Markdown daily report, generate a short social post, render an SVG social card, and append a JSON scheduling entry.

@@ -1,25 +1,30 @@
-# Architecture
+# Architecture & Design
 
-## Overview
-The project delivers a lightweight retrieval-augmented generation (RAG) toolkit with the following components:
+This project packages a compact RAG stack and automation demos that run entirely offline.
 
-- **Keyword tokeniser & answer stub (`llm_rag.rag_stub`)** — extracts alphanumeric tokens and returns a short stub response.
-- **`SimpleIndex` (`llm_rag.index_stub`)** — an in-memory, FAISS-like index using Jaccard similarity with JSON persistence.
-- **Pipeline utilities (`llm_rag.pipeline`)** — helpers to build an index from docs and run retrieval + answer.
-- **CLI entrypoint (`llm_rag.cli`)** — argparse script that supports loading/saving JSON indices.
-- **Gradio integration (`llm_rag.demo_app` & `app/demo_gradio.py`)** — reusable Blocks builders for web demos.
+## High-level flow
+```mermaid
+flowchart LR
+  Q[User query] --> R[SimpleIndex.search (Jaccard)]
+  R --> K[Top-K documents]
+  K --> A[rag_stub.answer (stub)]
+  A --> O[Answer]
+```
 
-## Data flow
-1. Documents (strings or mappings with `text`) are tokenised into sets.
-2. `SimpleIndex` stores `(id, text, tokens)` tuples.
-3. Queries are tokenised and compared via Jaccard overlap to retrieve top-k docs.
-4. `rag_stub.answer` summarises the highest scoring snippet into a stub response.
-5. The CLI/Gradio layers orchestrate build/retrieval cycles, optionally using `sample_data/capitals.txt`.
+## Modules
+- `rag_stub.answer(query, docs)` – returns a stubbed response derived from the best-matching document.
+- `index_stub.SimpleIndex` – in-memory index with `add_many`, `search`, and JSON serialisation (`save`/`load`). Stable ordering ensures deterministic tests.
+- `pipeline` – `build_index(docs)` and `rag_pipeline(query, index|docs, k)` for reusable orchestration.
+- `docqa` – loads TXT (one document per line) and, if available, PDF snippets via `pypdf`; otherwise falls back to sample TXT.
+- `chatbot` – rule-based intents (ticket creation, meeting scheduling) with RAG fallback for other prompts.
+- `resume` – keyword skill extraction, scoring, and ranking (TXT by default; PDF optional).
+- `reporting` – generates a Markdown daily report, ≤280-character social post, SVG card, and JSON scheduling entry.
 
-## Persistence
-- `SimpleIndex.save(path)` writes a JSON blob (`items`, `next_id`, version field) for portability.
-- `SimpleIndex.load(path)` reconstructs the index, re-tokenising stored texts.
+## Data considerations
+- Synthetic corpora only (`sample_data/`): capitals, generated PDFs, SVG card, scheduling JSON.
+- No secrets; environment variables configure demo behaviour (host/port) rather than credentials.
 
-## Testing & CI
-- Pytest smoke tests cover the index, pipeline, CLI, Gradio demos, Docker config, and documentation.
-- GitHub Actions workflow runs `pytest -q` and `ruff check --select=E9,F63,F7,F82 .` on push/PR.
+## Design choices
+- **Minimal dependencies** favour portability and clarity.
+- **Deterministic behaviour** (stable sorting, simple heuristics) keeps tests predictable.
+- **Extensibility** – modules are importable and can seed other demonstrations or tutorials.
