@@ -1,6 +1,6 @@
 # Documentation Index
 
-Start here for the portfolio-foundation manuals:
+Start here for the RAGworks manuals:
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) – module overview, data flow, and design decisions.
 - [DEMO.md](DEMO.md) – precise run instructions (local, Docker, CLI) for every demo.

@@ -25,7 +25,7 @@ def _run(query: str, files: List[gr.File] | None, k: int) -> str:
 
 
 def create_docqa_app() -> gr.Blocks:
-    with gr.Blocks(title="Document Q&A (stub)") as demo:
+    with gr.Blocks(title="RAGworks — Document Q&A (stub)") as demo:
         gr.Markdown("### Document Q&A (keyword retrieval + stub answer)\n_TXT always; PDFs if PyPDF is present._")
         with gr.Row():
             q = gr.Textbox(label="Question", placeholder="e.g., What is the capital of Norway?")

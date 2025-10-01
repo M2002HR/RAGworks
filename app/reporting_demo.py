@@ -49,7 +49,7 @@ def _schedule(post_text: str, when_iso: str, assets_path: str, queue_path: str):
 
 
 def create_reporting_app() -> gr.Blocks:
-    with gr.Blocks(title="Reporting & Content Automation (stub)") as demo:
+    with gr.Blocks(title="RAGworks — Reporting & Content Automation (stub)") as demo:
         gr.Markdown("### Reporting & Content Automation (stub)\n_Generate a daily Markdown report, a social post, an SVG card, and queue a scheduled post (JSON)._"
         )
 

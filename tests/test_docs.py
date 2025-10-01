@@ -5,7 +5,7 @@ def test_readme_has_sections_and_commands():
     root = pathlib.Path(__file__).resolve().parents[1]
     readme = (root / "README.md").read_text(encoding="utf-8")
     for key in [
-        "# portfolio-foundation",
+        "# RAGworks",
         "Quickstart (local)",
         "CLI usage",
         "Docker (multi-service)",

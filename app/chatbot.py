@@ -25,7 +25,7 @@ def _chat_fn(message: str, history):
 
 
 def create_chat_app() -> gr.Blocks:
-    with gr.Blocks(title="Enterprise Chatbot (stub)") as demo:
+    with gr.Blocks(title="RAGworks — Enterprise Chatbot (stub)") as demo:
         gr.Markdown("### Enterprise Chatbot (stub)\n_Tickets, scheduling, and RAG answers — no external APIs._")
         gr.ChatInterface(fn=_chat_fn, title="Chat")
     return demo

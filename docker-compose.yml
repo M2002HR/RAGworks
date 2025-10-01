@@ -1,7 +1,7 @@
 services:
   demo:
     build: .
-    container_name: portfolio-foundation-demo
+    container_name: ragworks-demo
     ports: ["7860:7860"]
     environment:
       - GRADIO_SERVER_NAME=0.0.0.0
@@ -10,7 +10,7 @@ services:
       - APP_PATH=app/demo_gradio.py
   docqa:
     build: .
-    container_name: portfolio-foundation-docqa
+    container_name: ragworks-docqa
     ports: ["7861:7861"]
     environment:
       - GRADIO_SERVER_NAME=0.0.0.0
@@ -19,7 +19,7 @@ services:
       - APP_PATH=app/doc_qa.py
   chatbot:
     build: .
-    container_name: portfolio-foundation-chatbot
+    container_name: ragworks-chatbot
     ports: ["7862:7862"]
     environment:
       - GRADIO_SERVER_NAME=0.0.0.0
@@ -28,7 +28,7 @@ services:
       - APP_PATH=app/chatbot.py
   resume:
     build: .
-    container_name: portfolio-foundation-resume
+    container_name: ragworks-resume
     ports: ["7863:7863"]
     environment:
       - GRADIO_SERVER_NAME=0.0.0.0
@@ -37,7 +37,7 @@ services:
       - APP_PATH=app/resume_demo.py
   reporting:
     build: .
-    container_name: portfolio-foundation-reporting
+    container_name: ragworks-reporting
     ports: ["7864:7864"]
     environment:
       - GRADIO_SERVER_NAME=0.0.0.0

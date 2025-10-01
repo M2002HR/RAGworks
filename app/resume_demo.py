@@ -35,7 +35,7 @@ def _run(job_desc: str, files: Optional[List[gr.File]], top_n: int):
 
 
 def create_resume_app() -> gr.Blocks:
-    with gr.Blocks(title="Resume Shortlister (stub)") as demo:
+    with gr.Blocks(title="RAGworks — Resume Shortlister (stub)") as demo:
         gr.Markdown("### Resume Shortlister (stub)\n_Keyword skills extraction; TXT/PDF supported (PDF optional)._")
         jd = gr.Textbox(label="Job Description", placeholder="e.g., Looking for Python + SQL + Docker")
         files = gr.Files(label="Upload resumes (TXT/PDF)", file_types=[".txt", ".pdf"])

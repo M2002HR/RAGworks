@@ -45,7 +45,7 @@ def _run(query: str, docs_text: str, k: int) -> str:
 
 
 def create_app() -> gr.Blocks:
-    with gr.Blocks(title="RAG Stub Demo") as demo:
+    with gr.Blocks(title="RAGworks — RAG Stub Demo") as demo:
         gr.Markdown("### RAG Stub Demo (keyword match)\n_No external APIs required._")
         with gr.Row():
             q = gr.Textbox(label="Query", placeholder="e.g., Which city in France has the Eiffel Tower?")

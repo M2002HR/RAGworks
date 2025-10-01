@@ -1,6 +1,6 @@
-# portfolio-foundation
+# RAGworks
 
-[![CI](https://img.shields.io/github/actions/workflow/status/yourname/portfolio-foundation/ci.yml?branch=main)](https://github.com/yourname/portfolio-foundation/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/yourname/RAGworks/ci.yml?branch=main)](https://github.com/yourname/RAGworks/actions)
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![Licence](https://img.shields.io/badge/licence-MIT-green)
 
