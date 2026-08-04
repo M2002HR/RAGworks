@@ -1,115 +1,151 @@
 # RAGworks
 
-Minimal RAG + automation portfolio: CLI, Gradio demos, Docker, CI — no external APIs
+[![CI](https://img.shields.io/github/actions/workflow/status/M2002HR/RAGworks/ci.yml?branch=master&label=CI)](https://github.com/M2002HR/RAGworks/actions)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 
-[![CI](https://img.shields.io/github/actions/workflow/status/yourname/RAGworks/ci.yml?branch=main)](https://github.com/yourname/RAGworks/actions)
-![Python](https://img.shields.io/badge/Python-3.10+-blue)
-![Licence](https://img.shields.io/badge/licence-MIT-green)
+**An offline AI-application portfolio with lightweight retrieval, document Q&A, workflow demos, Docker services, tests, and CI.**
 
-A compact, batteries-included AI & automation showcase. It bundles a reusable RAG stub, document Q&A, workflow chatbot, résumé shortlister, and reporting/content automation – each with Gradio demos, CLI entry points, Docker support, and continuous integration.
+RAGworks packages several small, self-contained examples behind reusable Python modules, CLI commands, and Gradio interfaces. It is intentionally dependency-light and runs on synthetic/local data without external model APIs.
 
-All examples use synthetic data only. Never commit secrets; use placeholders such as `OPENAI_API_KEY=PLACEHOLDER`.
+> The retrieval layer is a transparent keyword/Jaccard implementation for demonstration and testing. It is not presented as semantic vector search or a production RAG engine.
 
----
+## Engineering highlights
 
-## Contents
-- [Features](#features)
-- [Quickstart (local)](#quickstart-local)
-- [CLI usage](#cli-usage)
-- [Demos (Gradio)](#demos-gradio)
-- [Docker (multi-service)](#docker-multi-service)
-- [CI / lint / tests](#ci--lint--tests)
-- [Project structure](#project-structure)
-- [Troubleshooting](#troubleshooting)
-- [FAQ](#faq)
-- [Security & data](#security--data)
-- [Licence](#licence)
+- Reusable `src/` package layout
+- Lightweight document indexing with JSON persistence
+- CLI and Gradio interfaces over shared application logic
+- TXT and optional PDF document ingestion
+- Resume ranking and reporting workflow examples
+- Five Docker Compose services built from one image
+- Synthetic sample data and deterministic local execution
+- GitHub Actions, pytest, and Ruff checks
+- No required API keys or outbound model calls
 
-## Features
-- **RAG core** – keyword-based `answer()` plus a light-weight `SimpleIndex` with JSON save/load helpers.
-- **Demos and pipelines** – Gradio apps for RAG, document Q&A (TXT and optional PDF), chatbot (ticket/scheduling stubs), résumé ranking, and reporting (Markdown summary, short social post, SVG card, JSON scheduler).
-- **Developer UX** – src-layout, editable install (`pip install -e .`), CLI (`llm-rag`), Docker Compose services, GitHub Actions.
-- **Minimal dependencies** – Python stdlib and Gradio. PDF support is optional via `pypdf`.
+## Technology
 
-## Quickstart (local)
+`Python` · `Gradio` · `Docker Compose` · `pytest` · `Ruff` · `pypdf` · `CLI Applications` · `GitHub Actions`
+
+## Included applications
+
+| Application | Purpose | Default port |
+| --- | --- | ---: |
+| Retrieval demo | Query a small local corpus | 7860 |
+| Document Q&A | Load TXT/PDF content and answer from retrieved passages | 7861 |
+| Workflow chatbot | Demonstrate ticketing, scheduling, and retrieval fallback | 7862 |
+| Resume shortlister | Rank synthetic resume records against a role | 7863 |
+| Reporting demo | Generate Markdown, social copy, SVG, and JSON scheduling output | 7864 |
+
+## Architecture
+
+```text
+CLI or Gradio application
+          │
+          ▼
+Reusable pipeline modules
+          │
+          ├── document loading
+          ├── tokenization and SimpleIndex
+          ├── keyword/Jaccard retrieval
+          └── application-specific formatting
+          │
+          ▼
+Local result and generated artifacts
+```
+
+## Quick start
+
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 pip install -e .
 pytest -q
 ```
 
-## CLI usage
-```bash
-# RAG answer using the sample corpus
-llm-rag -q "What is the capital of Norway?" --docs sample_data/capitals.txt -k 1
+Use the CLI:
 
-# Persist and reload an index
-llm-rag -q "Capital of Japan" --docs sample_data/capitals.txt --save-index /tmp/idx.json -k 2
-llm-rag -q "Capital of Japan" --load-index /tmp/idx.json -k 1
+```bash
+llm-rag \
+  --docs sample_data/capitals.txt \
+  --query "What is the capital of Norway?" \
+  -k 1
 ```
 
-Generate sample PDFs without extra dependencies:
+Persist and reload an index:
+
 ```bash
-python scripts/generate_sample_pdf.py sample_data/capitals.pdf
-python scripts/generate_sample_resume_pdf.py sample_data/resume_sample.pdf
+llm-rag --docs sample_data/capitals.txt --query "Capital of Japan" --save-index /tmp/index.json -k 2
+llm-rag --load-index /tmp/index.json --query "Capital of Japan" -k 1
 ```
 
-## Demos (Gradio)
-```bash
-# src-layout friendly launches
-PYTHONPATH=src python app/demo_gradio.py       # RAG demo
-PYTHONPATH=src python app/doc_qa.py            # Document Q&A (TXT/PDF)
-PYTHONPATH=src python app/chatbot.py           # Chatbot (tickets, scheduling, RAG fallback)
-PYTHONPATH=src python app/resume_demo.py       # Résumé shortlister
-PYTHONPATH=src python app/reporting_demo.py    # Reporting & content automation
-```
-All demos respect `GRADIO_SERVER_NAME` and `GRADIO_SERVER_PORT`.
+## Run the interfaces
 
-## Docker (multi-service)
-A single image powers five services on distinct ports.
+```bash
+PYTHONPATH=src python app/demo_gradio.py
+PYTHONPATH=src python app/doc_qa.py
+PYTHONPATH=src python app/chatbot.py
+PYTHONPATH=src python app/resume_demo.py
+PYTHONPATH=src python app/reporting_demo.py
+```
+
+The interfaces respect `GRADIO_SERVER_NAME` and `GRADIO_SERVER_PORT`.
+
+## Docker Compose
+
 ```bash
 docker compose up --build -d
-for p in 7860 7861 7862 7863 7864; do curl -sf http://localhost:$p >/dev/null && echo "port $p OK" || echo "port $p FAIL"; done
 ```
-Ports: `7860` demo · `7861` document Q&A · `7862` chatbot · `7863` résumé · `7864` reporting.
 
-If you prefer identical container ports, map host → container `7860` for each service in Compose and control the application via `GRADIO_SERVER_PORT`.
+Check the services:
 
-## CI / lint / tests
-The workflow `.github/workflows/ci.yml` runs on every push, pull request, and manual dispatch. It caches pip, installs dependencies, runs `pytest -q`, then executes `ruff check --select=E9,F63,F7,F82 .`.
+```bash
+for port in 7860 7861 7862 7863 7864; do
+  curl -fsS "http://127.0.0.1:${port}" >/dev/null && echo "${port}: OK"
+done
+```
 
-Locally:
+## Repository structure
+
+```text
+app/                 # Gradio entry points
+src/llm_rag/         # Reusable retrieval and workflow modules
+sample_data/         # Synthetic corpora and generated examples
+scripts/             # Sample-data generators
+tests/               # Unit and integration tests
+docs/                # Architecture and demo notes
+.github/workflows/   # Continuous integration
+Dockerfile
+docker-compose.yml
+```
+
+## Verification
+
 ```bash
 pytest -q
-python -m pip install ruff && ruff check --select=E9,F63,F7,F82 .
+python -m pip install ruff
+ruff check --select=E9,F63,F7,F82 .
 ```
 
-## Project structure
-```text
-app/                 Gradio demos (RAG, Doc Q&A, Chatbot, Résumé, Reporting)
-src/llm_rag/         Reusable modules (rag_stub, index_stub, pipeline, docqa, chatbot, resume, reporting)
-sample_data/         Synthetic corpora and generated artefacts (PDFs, SVG, JSON)
-tests/               Smoke and integration tests (includes PDF generation)
-Dockerfile, docker-compose.yml
-.github/workflows/ci.yml
-```
+The CI workflow runs tests and critical Ruff rules on pushes and pull requests.
 
-## Troubleshooting
-- **Service unreachable on 7861/7863** – ensure `GRADIO_SERVER_PORT` is set per service; rebuild and run `docker compose up -d`.
-- **Pip JSON decode errors during Docker build** – the Dockerfile forces the canonical PyPI index and retry logic. Behind a proxy, add trusted-host arguments.
-- **PDF ingestion empty** – `pypdf` is optional; without it the loader falls back to `sample_data/capitals.txt`.
+## Retrieval behavior
 
-## FAQ
-**Where does retrieval happen?** In `SimpleIndex.search()` (token-based Jaccard). `rag_pipeline()` wires the index into `rag_stub.answer()`.
+`SimpleIndex` tokenizes documents and ranks them using Jaccard-style token overlap. This makes the implementation:
 
-**Can I persist the index?** Yes – `SimpleIndex.save()` and `SimpleIndex.load()`, or the CLI `--save-index/--load-index` flags.
+- easy to inspect
+- deterministic
+- fast on small sample corpora
+- suitable for learning, UI development, and pipeline testing
 
-**Are secrets required?** No. Use placeholders only; everything operates offline with synthetic content.
+For semantic or production retrieval, replace it with an embedding model, chunking strategy, vector store, reranking, source citations, and evaluation dataset.
 
-## Security & data
-Use synthetic or auto-generated data located under `sample_data/` exclusively. The project makes no outbound API calls; optional PDF parsing remains local.
+## Security and data
 
-## Licence
-MIT. Add a dedicated LICENCE file if required.
+- sample inputs are synthetic or generated locally
+- no secrets are required
+- no external AI API is called
+- generated indexes and reports may still contain source-document text and should be handled accordingly
 
-For deeper guidance, read `docs/ARCHITECTURE.md`, `docs/DEMO.md`, and `docs/index.md`.
+## Project status
+
+RAGworks is a compact application portfolio and offline integration test bed. It demonstrates packaging, retrieval interfaces, workflow automation, Gradio UX, containerization, tests, and CI while keeping the limitations of its retrieval method explicit.
